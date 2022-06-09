@@ -106,6 +106,7 @@ $$y = \sum_{i=1}^{n}w_ix_i$$
 其中$n$为上一层神经网络的数量(当前层网络输入的维度)。**假设$x,w$独立同分布，且他们的均值均为0。**  
 
 计算$y$的方差：
+
 $$
 \begin{align}
 Var(y) &= \sum_{i=1}^{n}Var(w_ix_i)\\
@@ -117,12 +118,14 @@ Var(y) &= \sum_{i=1}^{n}Var(w_ix_i)\\
 $$
 
 也可以是（$x, y$相互独立且均值为0，则$D(xy) = D(x)D(y)$，直接带入即可得到）:
+
 $$
 Var(y) = \sum_{i=1}^{n}Var(w_ix_i) = nVar(w)Var(x)
 \tag{4.1.2}
 $$
 
 我们希望神经网络训练过程中满足每层的方差保持不变
+
 $$
 Var(w) = \frac{1}{n}
 \tag{4.1.3}
@@ -133,10 +136,12 @@ $$
 
 ### 4.2 Xavier 初始化
 考虑神经网络
+
 $$
 y^j_l = \sum_{i=1}^{n_l}w^{ij}_lx^i_l \\
 x_{l+1} = f(y_l)
 $$   
+
 其中$n_l$为上一层层神经网络的输出维度(当前第$l$层网络输入的维度)，$f$为激活函数tanh。
 
 首先介绍**Glorot假设**：
@@ -146,6 +151,7 @@ $$
 4. 初始时，激活函数的输入落在线性区域，也即$f'(y) = 1$
 
 此外，我们还假设$x,w$独立同分布，且他们的均值均为0。    
+
 $$
 \begin{align}
 Var(x_{l+1}) &= Var(f(y_l)) \\
@@ -159,30 +165,38 @@ Var(x_{l+1}) &= Var(f(y_l)) \\
 $$
 
 也可以是（$x, y$相互独立且均值为0，则$D(xy) = D(x)D(y)$，直接带入即可得到）:
+
 $$
 Var(x_{l+1}) = \sum_{i=1}^{n_l}Var(w^i_lx^i_l) = n_lVar(w_l)Var(x_l)
 \tag{4.2.2}
 $$
 
 我们希望神经网络forward过程中满足每层激活值的方差保持不变，也即$Var(x_{l+1}) = Var(x_l)$，我们可以得到：
+
 $$
 Var(w_l) = \frac{1}{n_l}
 \tag{4.2.3}
 $$   
+
 但上述结论只考虑了forward.       
 根据4.2.2式子，更进一步则有:
+
 $$
 Var(x_{l+1}) = Var(x_1)\prod_{i=1}^{l}n_iVar(w_i)
 \tag{4.2-forward}
 $$
+
 其中，$Var(x_1)$为整个神经网络最开始的输入，我们一般会对其进行normalization，使得$Var(x_1) = 1$。进而可知，在Xavier初始化下，前相传播神经网络每一层激活输出的方差都接近1
 
 接下来推导反向传播
+
 $$
 \frac{\partial L}{\partial w_l^{kj}} = \frac{\partial y_l}{\partial w_l^{kj}} \frac{\partial L}{\partial y_l^k} = x_l^j \frac{\partial L}{\partial y_l^k} 
 \tag{4.2.4}
 $$
+
 接下来我们计算：
+
 $$ 
 \frac{\partial L}{\partial y_l^j} = \frac{\partial L}{\partial y_{l+1}} \frac{\partial y_{l+1}}{\partial y_l^j}
 = \frac{\partial L}{\partial y_{l+1}} \frac{\partial y_{l+1}}{\partial x_{l+1}^j} \frac{\partial x_{l+1}^j}{\partial y_l^j} \\
@@ -191,6 +205,7 @@ $$
 $$
 
 我们的主要目标是$Var(\frac{\partial L}{\partial w_{l+1}}) = Var(\frac{\partial L}{\partial w_l})$，而根据4.2.4式，我们需要先计算：
+
 $$
 \begin{align}
 Var(\frac{\partial L}{\partial y_l^j}) &= Var(f'(y_l^j) (w_{l+1}^{[:,j]})^T \frac{\partial L}{\partial y_{l+1}} ) ~~~(由于处于激活函数线性区域) \\
@@ -200,13 +215,17 @@ Var(\frac{\partial L}{\partial y_l^j}) &= Var(f'(y_l^j) (w_{l+1}^{[:,j]})^T \fra
 \tag{4.2.6}
 \end{align}
 $$
+
 更进一步可以有：
+
 $$
 Var(\frac{\partial L}{\partial y_l^j})= Var(\frac{\partial L}{\partial y_d}) \prod_{i=l+1}^{d} n_{i+1}Var(w_i) 
 \tag{4.2.7}
 $$
+
 其中$d$指该神经网络一共有$d$层。    
 将4.2.7带入4.2.4则有：
+
 $$
 \begin{align}
 Var(\frac{\partial L}{\partial w_l^{kj}}) &= Var(x_l^j \frac{\partial L}{\partial y_l^k}) \\
@@ -218,18 +237,21 @@ Var(\frac{\partial L}{\partial w_l^{kj}}) &= Var(x_l^j \frac{\partial L}{\partia
 $$
 
 再将4.2-forward带入则有
+
 $$
 Var(\frac{\partial L}{\partial w_l^{kj}}) = Var(x_1) Var(\frac{\partial L}{\partial y_d}) \prod_{i=1}^{l-1}[n_iVar(w_i)] \prod_{i=l+1}^{d}[n_{i+1}Var(w_i)]
 \tag{4.2.9}
 $$
 
 我们依然希望$Var(\frac{\partial L}{\partial w_{l_1}})=Var(\frac{\partial L}{\partial w_{l_2}})~ \forall l_1,l_2$其等价于$Var(\frac{\partial L}{\partial w_{l}})=Var(\frac{\partial L}{\partial w_{l+1}})$，因此有
+
 $$
 n_{l+2}Var(w_{l+1}) = n_{l}Var(w_l)
 \tag{4.2-backward}
 $$  
 
 实际上，如果要同时满足**4.2-forward**和**4.2-backward**，是没有解的。在原文中，作者选择的是近似解。也即，先近似满足**4.2-forward**，这时每层权重符合**4.2.3**式。这时可以近似的认为各层的激活值方差相同$Var(x_l) = Var(x_{l+1})$，那么以此为基础我们重新考量**4.2.8**式:
+
 $$
 Var(\frac{\partial L}{\partial w_l^{kj}}) 
 = Var(x_l^j) Var(\frac{\partial L}{\partial y_d}) \prod_{i=l+1}^{d} n_{i+1}Var(w_i) \\
@@ -239,14 +261,18 @@ Var(\frac{\partial L}{\partial w_{l+1}^{kj}})
 $$
 
 又由于其也要满足forward条件，综上，$w$的分布应该满足
+
 $$
 n_{l+1}Var(w_{l}) = 1 \\ 
 n_{l}Var(w_{l}) = 1, \forall l 
 $$
+
 这时我们取两者中间值：
+
 $$
 Var(w_l) = \frac{1}{n_l + n_{l+1}}
 $$
+
 其中$n_l$是第$l$层神经网络的输出维度，而$n_{l+1}$是输出维度。
 <!-- 按照我们在forward中推导出的$Var(x) = 1$，代入可得
 $$
@@ -261,6 +287,7 @@ Var(w) = \frac{2}{n_{in}+n_{out}}
 $$ -->
 
 那么Xavier初始化只需满足以下两点：
+
 $$
 E(w) = 0 \\
 Var(w) = \frac{2}{n_{in}+n_{out}}
@@ -268,10 +295,13 @@ $$
 
 给出<ins>**Xavier初始化的两种形式**</ins>：
 1. <ins>**均匀分布** (原文用的均匀分布)</ins>
+
 $$
 w \backsim U[-\frac{\sqrt{6}}{\sqrt{n_{in}+n_{out}}}, \frac{\sqrt{6}}{\sqrt{n_{in}+n_{out}}}]]
 $$
+
 2. <ins>**正态分布**</ins>
+
 $$
 w\backsim N(0, \frac{2}{n_{in}+n_{out}})
 $$
@@ -284,16 +314,21 @@ $$
 2. 且$w$分布关于0对称
 
 还是考虑这个神经网络：
+
 $$
 每一层输出  ~~y = \sum_{i=1}^{n}w_ix_i \\
 第_l层输入为_{l-1}层输出经\rm{ReLU}得到  ~~~x_l = \rm{ReLU}(y_{l-1})
 $$   
+
 我们推导Kaiming初始化：
+
 $$
 Var(y) = \sum_{i=1}^{n}Var(w_ix_i)\\
 = \sum_{i=1}^{n} E[w_i]^2Var(x_i) + E[x_i]^2Var(w_i) + Var(x_i)Var(w_i)\\
 $$
+
 由于有假设$E[w] = 0$, 又由$Var(x) = E(x^2) - E(x)^2$，则有
+
 $$
 Var(y) 
 = \sum_{i=1}^{n}E[x_i]^2Var(w_i) + Var(x_i)Var(w_i) \\
@@ -302,32 +337,41 @@ Var(y)
 = nVar(w)E(x^2)
 \tag{4.3.1}
 $$
+
 考虑当前为第$l$层，记$x_l$的维度为$n_l$，则
+
 $$
 Var(y_l) = n_lVar(w_l)E(x_l^2)
 \tag{4.3.2}
 $$    
 
 对于$E(x_l^2)$可以用$l-1$层来估计：
+
 $$
 E(x_l^2) = E(f^2(y_{l-1})) = \int_{-\infty}^{+\infty}p(y_{l-1})f^2(y_{l-1})dy_{l-1}\\
 = \int_{0}^{+\infty}p(y_{l-1})y_{l-1}^2dy_{l-1}
 \tag{4.3.3}
 $$
+
 其中$f$为RELU激活函数.    
 又由假设$w$分布关于0对称，所以对任意的输入$x$，均有$y$关于0对称分布，则:
+
 $$
 E(y_{l-1}^2) = \int_{-\infty}^{+\infty}p(y_{l-1})t_{l-1}^2dy_{l-1} \\ 
 = \int_{0}^{+\infty}p(y_{l-1})t_{l-1}^2dy_{l-1} + \int_{-\infty}^{0}p(y_{l-1})t_{l-1}^2dy_{l-1} \\
 =2\int_{0}^{+\infty}p(y_{l-1})t_{l-1}^2dy_{l-1}
 \tag{4.3.4}
 $$
+
 带入式4.3.3，得到
+
 $$
 \frac{1}{2}E(y_{l-1}^2) = E(x_l^2)
 \tag{4.3.5}
 $$
+
 将其带入4.3.2，并根据$D(x) = E(x^2) - E(x)^2$, $E(y) = 0$则有
+
 $$
 Var(y_l) = \frac{1}{2}n_lVar(w_l)E(y_{l-1}^2) \\ 
 = \frac{1}{2}n_lVar(w_l)[D(y_{l-1}) + E(y_{l-1})^2] \\ 
@@ -336,10 +380,13 @@ Var(y_l) = \frac{1}{2}n_lVar(w_l)E(y_{l-1}^2) \\
 $$
 
 我们可以不断迭代写出下式:
+
 $$
 Var(y_l) = Var(y_1) \prod_{i=1}^{l}\frac{1}{2}n_iVar(w_i)
 $$
+
 又由$y_1 = w_1x_1$，且输入的$x_1$经过归一化后$E(x) = 0, D(x) = 1$，带入4.3.1式有
+
 $$
 Var(y_1) = n_1Var(w_1) 
 $$
@@ -349,6 +396,7 @@ $$
 ```
 
 故有
+
 $$
 \frac{1}{2}n_lVar(w_l) = 1 \\
 Var(w_l) = \frac{2}{n_l}
@@ -356,22 +404,29 @@ Var(w_l) = \frac{2}{n_l}
 $$
 
 此处为forward，下面推导反向传播backword
+
 $$
 \frac{\partial L}{\partial y_l} = \frac{\partial L}{\partial x_{l+1}} \frac{\partial x_{l+1}}{\partial y_l} \\
 = \frac{\partial L}{\partial x_{l+1}} f'(y_l)
 \tag{4.3.8}
 $$
+
 假设$f'(y_l)$和$\frac{\partial L}{\partial x_{l+1}}$相互独立，接下来计算：
+
 $$
 E(\frac{\partial L}{\partial y_l}) = E(\frac{\partial L}{\partial x_{l+1}})E(f'(y_l)) 
 = \frac{1}{2}E(\frac{\partial L}{\partial x_{l+1}})
 $$
+
 我们假设$E(\frac{\partial L}{\partial x_{l+1}}) = 0$，则有$E(\frac{\partial L}{\partial y_l}) = 0$，
 进而则有：
+
 $$
 Var(\frac{\partial L}{\partial y_l}) = E[(\frac{\partial L}{\partial y_l})^2] - E[\frac{\partial L}{\partial y_l}]^2 = E[(\frac{\partial L}{\partial y_l})^2]
 $$
+
 记$\triangledown x = \frac{\partial L}{\partial x}$，然后：
+
 $$
 Var(\triangledown y_l) = var(f'(y_l) \triangledown x_{l+1})\\
 = \frac{1}{2}\int_{-\infin}^{0} \triangledown x_{l+1}^2 f_{\triangledown y_l}(\triangledown y_l)d\triangledown y_l + \frac{1}{2}\int_{0}^{+\infin}\triangledown x_{l+1}^2f_{\triangledown y_l}(\triangledown y_l)d\triangledown y_l \\
@@ -381,15 +436,20 @@ Var(\triangledown y_l) = var(f'(y_l) \triangledown x_{l+1})\\
 $$
 
 接下来我们进一步计算
+
 $$
 Var(\triangledown x_l^k) = Var(\sum_{i=1}^{n_{l+1}}\triangledown y_l^i \frac{\partial y_l^i}{\partial x_l^k}) = Var(\sum_{i=1}^{n_{l+1}}\triangledown y_l^i w_l^{ki}) \\
 = n_{l+1}Var(\triangledown y_l)Var(w_l)
 $$
+
 将**4.3.9**带入，则有：
+
 $$
 Var(\triangledown x_l) = \frac{1}{2} n_{l+1}Var(w_l) Var(\triangledown x_{l+1})
 $$
+
 为尽可能满足$Var(\triangledown x_l) = Var(\triangledown x_{l+1})$，故所以，反向传播时则有
+
 $$
 Var(w_l) = \frac{2}{n_{l+1}}
 $$
@@ -399,6 +459,7 @@ $$
 ```
 
 如果使用正态分布初始化，则为：
+
 $$
 w\backsim N(0, \frac{2}{n})
 $$

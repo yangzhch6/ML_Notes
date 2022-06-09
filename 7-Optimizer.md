@@ -8,6 +8,7 @@ $g_i = \nabla L[f(\theta_{i-1}, x), y]$ is the gradient at $i$ step.
 ## 1. SGD (Stochastic Gradient Descent)
 $\alpha$ is the learning rate.  
 the descent gradient $\eta_i$ at $i$ step can be formulated as:
+
 $$
 \eta_i = \alpha g_i
 $$
@@ -25,6 +26,7 @@ Drawbacks: 梯度更新次数较多，由不同batch决定的梯度方向改变�
 $\alpha$ is the learning rate.  
 $v_{i-1}$ is the descent gradient of $_{i-1}$ step and is initialized as $v_0$.  
 $\beta$ is the parameter of Momentum SGD algorithm.  
+
 $$
 v_i = \beta v_{i-1} - g_i \\   
 r = r + 
@@ -39,6 +41,7 @@ Advantages: 引入动量平滑了梯度更新方向。从图上来讲，减少�
 $\alpha$ is the learning rate.      
 $\beta$ is the parameter of NAG.   
 initialize $d_0$   
+
 $$
 d_i = \beta d_{i-1} + g(\theta_{i-1}-\alpha\beta d_{i-1})\\
 \theta_i = \theta_{i-1} - \alpha d_i
@@ -50,6 +53,7 @@ $$
 链接【https://zhuanlan.zhihu.com/p/22810533】详细证明了这一结论
 ```
 另附上泰勒展开公式
+
 $$
 f(x) = f(x_0) + \frac{f^{(1)}(x_0)}{1!}(x-x_0) + \frac{f^{(2)}(x_0)}{2!}(x-x_0)^2 + \dots + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)
 $$
@@ -62,6 +66,7 @@ $$
 $\alpha$ is the learning rate.      
 $\delta$ is is a very small constant.   
 Accumulative gradient sum of squares is denoted as $r$ 
+
 $$
 r = r + g^2 \\
 \theta_i = \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{r}} g
@@ -79,6 +84,7 @@ $\alpha$ is the learning rate.
 $\beta$ is the parameter of RMSProp.     
 $\delta$ is is a very small constant.   
 Accumulative gradient sum of squares is denoted as $r$ 
+
 $$
 r = \beta r + (1-\beta)g^2 \\
 \theta_i = \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{r}} g
@@ -94,6 +100,7 @@ $\beta_1$ and $\beta_2$ are the parameter of Adam.
 $\delta$ is is a very small constant.     
 $r$ is the accumulative gradient sum   
 initialize $v_0$   
+
 $$
 \begin{align}
 v_i &= \beta_1 v_{i-1} + (1-\beta_1) g_i\\
@@ -112,6 +119,7 @@ Adam综合了RMSProp和Momentum的优点。
 -----
 ## 7. Adam + L2  
 如果在损失函数中添加正则项(regularization):
+
 $$
 L_{reg} = L + \frac{\lambda}{2n} \sum_{i=1}^{n}w_i^2 \\
 L_{reg}' = L' + \frac{\lambda}{n} \sum_{i=1}^{n}w_i 
@@ -125,6 +133,7 @@ $\delta$ is is a very small constant.
 $r$ is the accumulative gradient sum   
 $\lambda$ is the L2 penalty    
 initialize $v_0$   
+
 $$
 \begin{align}
 g_i &= g_i + \lambda \theta_{i-1} \\
@@ -147,6 +156,7 @@ $\delta$ is is a very small constant.
 $r$ is the accumulative gradient sum   
 $\lambda$ is the L2 penalty    
 initialize $v_0$   
+
 $$
 \begin{align}
 v_i &= \beta_1 v_{i-1} + (1-\beta_1)g_i\\

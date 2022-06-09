@@ -71,11 +71,13 @@ $$
 -----
 # 回归损失
 ## 1. MAE (L1 Loss)
+
 $$
 L_{MAE} = |y - f(x)|
 $$
 
 ## 2. MSE (L2 Loss)
+
 $$
 L_{MSE} = |y - f(x)|^2
 $$
@@ -88,6 +90,7 @@ $$
 
 ## 3. Huber Loss
 结合了MAE和MSE，设定了一个阈值$\delta$
+
 $$
 L_{Huber} = 
 \begin{cases}
@@ -105,6 +108,7 @@ $$
 2. 若异常值不重要且想降低其影响：Huber Loss > (MAE > MSE)
 
 ## 4. Hinge Loss (折页损失函数)
+
 $$
 L_{Hinge} = max(0, 1-y\hat{y})
 $$
