@@ -24,6 +24,7 @@ D_{KL}(p||q) = \sum_{i=1}^{K}p(x_i)logp(x_i) - \sum_{i=1}^{K}p(x_i)logq(x_i) \\
 = -H(p) - (- H(p,q)) \\
 = H(p, q) - H(p)
 $$
+
 也即，**KL散度 = 交叉熵 - 信息熵**
 
 **交叉熵**：对两个概率分布**差异性**的度量(交叉熵越小，差异越小)
@@ -39,6 +40,7 @@ $$
 L_{ce} = -\sum_{i=1}^{n}y_{ij} logp(p_{ij})\\
 j \in 0, 1, \dots, K 
 $$
+
 其中$y_{ij}$表示第$i$个样本的标签是$j$，$p_{ij}$表示第$i$个样本在第$j$类的概率输出。
 
 题外话:
@@ -52,6 +54,7 @@ L_{ce} = -\sum_{i=1}^{n}\alpha_jy_{ij} logp(p_{ij})\\
 \alpha_j = \frac{n_j}{\sum_{k=1}^{K}n_k}\\
 j \in 0, 1, \dots, K 
 $$
+
 其中$n_k$代表第$k$类样本数量
 
 ## 4. Focal loss
@@ -61,6 +64,7 @@ $$
 L_{ce} = -\sum_{i=1}^{n}y_{ij} (1-p_{ij})^{\lambda} logp(p_{ij})\\
 j \in 0, 1, \dots, K 
 $$
+
 **Focal Loss优点**:
 相对于加入了样本均衡因素的CE，Focal Loss侧重于对难以分类的样本。因为$(1-p_{ij})^{\lambda}$中，若$p_{ij}$越小，代表该样本更难分类，因此对其赋予的loss更大。
 
@@ -91,6 +95,7 @@ L_{Huber} =
 2\delta|y-f(x)| + \delta^2 & else
 \end{cases}
 $$
+
 **Huber Loss**的好处：
 1. 在Loss较小的时候，使用MSE，这样在极值点处的梯度较小，容易优化。(修正了MAE的问题)
 2. 在loss较大的时候(异常值)处，使用MAE，这样可以防止异常值梯度过大，影响模型的优化。
@@ -103,4 +108,5 @@ $$
 $$
 L_{Hinge} = max(0, 1-y\hat{y})
 $$
+
 SVM里软间隔曾出现过。

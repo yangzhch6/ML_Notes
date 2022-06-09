@@ -31,6 +31,7 @@ D(XY) = E(X^2\cdot Y^2)-E(XY)^2 \\
 =E(X^2\cdot Y^2)-[E(X)E(Y)]^2 \\
 =1
 $$
+
 则均值为$E(q\cdot k) = \sum_{i=1}^{d_k}E(q_i k_i) = 0$，  
 方差为$D(q\cdot k) = \sum_{i=1}^{d_k}D(q_i k_i) = d_k$
 因此放缩$\sqrt{d_k}$可以将$q\cdot k$放缩到方差为1

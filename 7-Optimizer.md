@@ -11,6 +11,7 @@ the descent gradient $\eta_i$ at $i$ step can be formulated as:
 $$
 \eta_i = \alpha g_i
 $$
+
 update the parameter:
 $$
 \theta_i = \theta_{i-1} - \eta_i
@@ -82,6 +83,7 @@ $$
 r = \beta r + (1-\beta)g^2 \\
 \theta_i = \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{r}} g
 $$
+
 ```
 RMSProp优化算法和AdaGrad算法唯一的不同，就在于累积平方梯度的求法不同。其缓解了AdaGrad梯度下降收缩太快的问题。
 ```
