@@ -93,9 +93,67 @@ $\delta$ is is a very small constant.
 $r$ is the accumulative gradient sum   
 initialize $v_0$   
 $$
-v_i = \beta_1 v_{i-1} + (1-\beta_1) g_i\\
-r = \beta_2 r + (1-\beta_2) g_i^2 \\
-\theta_i = \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{r}} v_i
+\begin{align}
+v_i &= \beta_1 v_{i-1} + (1-\beta_1) g_i\\
+r_t &= \beta_2 r + (1-\beta_2) g_i^2 \\
+\hat v_i &= \frac{v_i}{1-\beta_1^i} ~~~~(bias-corrected)\\
+\hat r_i &= \frac{r_i}{1-\beta_2^i} ~~~~(bias-corrected)\\
+\theta_i &= \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{\hat r_i}} \hat v_i
+\end{align}
+\tag{Adam}
+$$
+
+```
+Adam综合了RMSProp和Momentum的优点。
+此外Adam还解决了动量方法和梯度累加方法存在的一个问题，也即动量v和梯度平方r和一开始均被初始化为0，因此在最开始的几步都很小。因此，为了降低偏差对训练初期的影响，Adam方法对动量和梯度累加和进行了纠偏操作。
+```
+-----
+## 7. Adam + L2  
+如果在损失函数中添加正则项(regularization):
+$$
+L_{reg} = L + \frac{\lambda}{2n} \sum_{i=1}^{n}w_i^2 \\
+L_{reg}' = L' + \frac{\lambda}{n} \sum_{i=1}^{n}w_i 
+$$
+
+Adam优化器中加入L2正则项：
+
+$\alpha$ is the learning rate.   
+$\beta_1$ and $\beta_2$ are the parameter of Adam.   
+$\delta$ is is a very small constant.     
+$r$ is the accumulative gradient sum   
+$\lambda$ is the L2 penalty    
+initialize $v_0$   
+$$
+\begin{align}
+g_i &= g_i + \lambda \theta_{i-1} \\
+v_i &= \beta_1 v_{i-1} + (1-\beta_1)g_i\\
+r_i &= \beta_2 r + (1-\beta_2) g_i^2 \\
+\hat v_i &= \frac{v_i}{1-\beta_1^i} ~~~~(bias-corrected)\\
+\hat r_t &= \frac{r_i}{1-\beta_2^i} ~~~~(bias-corrected)\\
+\theta_i &= \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{\hat r_i}} \hat v_i
+\end{align}
+\tag{Adam+L2}
+$$
+
+-----
+## 8. AdamW  
+Adam+L2存在一个问题，也即当梯度的计算加入L2后，其会除去掉一个梯度累加平方和$r_i$。在考虑L2正则项的损失函数中，我们本意是希望模型权重$w$越大，梯度越大，但是Adam+L2中计算出的梯度累加平方和$r_i$也会更大，这就使得减去的正则项偏小。AdamW改进了这一点，将正则项绕过梯度累加步骤，放到最后进行计算。
+
+$\alpha$ is the learning rate.   
+$\beta_1$ and $\beta_2$ are the parameter of Adam.   
+$\delta$ is is a very small constant.     
+$r$ is the accumulative gradient sum   
+$\lambda$ is the L2 penalty    
+initialize $v_0$   
+$$
+\begin{align}
+v_i &= \beta_1 v_{i-1} + (1-\beta_1)g_i\\
+r_i &= \beta_2 r + (1-\beta_2) g_i^2 \\
+\hat v_i &= \frac{v_i}{1-\beta_1^i} ~~~~(bias-corrected)\\
+\hat r_t &= \frac{r_i}{1-\beta_2^i} ~~~~(bias-corrected)\\
+\theta_i &= \theta_{i-1} - \alpha \frac{1}{\delta + \sqrt{\hat r_i}} \hat v_i - \alpha \lambda \theta_{i-1}
+\end{align}
+\tag{Adam+L2}
 $$
 
 ------
