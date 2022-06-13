@@ -1,10 +1,37 @@
 # Attention
+Attention 机制计算过程一般呈以下的样子:
 
+给定$Q, K, V$三个矩阵向量
+
+$$
+Score = f(Q, K) \\
+feature = \rm{softmax}(Score) V
+$$
+
+其中$f$用来计算两个值的attention分数
+
+-----
 ## 1. 加性和乘性attention
-### 1.1 加性attention (Bahdanau Attention)
+Attention机制可以根据计算流程，分出加性和乘性两种。这两种形式最初的代表即为Bahdanau attention & Luong Attention (参考链接内容)
 
-### 1.2 乘性attention (Luong Attention) 
+其主要区别在于attention分数计算方式的不同：    
+1. 加性attention (Bahdanau Attention)
 
+$$
+Score = W_0 \cdot tanh(W_1 Q + W_2 K)
+$$
+
+其中$W_0, W_1, W_2$均是可训练参数
+
+2. 乘性attention (Luong Attention) 
+
+$$
+Score = W_1 Q \cdot W_2 K
+$$
+
+其中$W_1, W_2$均是可训练参数
+
+-----
 ## 2. transformer
 ### 2.1 embedding
 self attention对位置不敏感，因此需要在embedding中添加位置信息。而position embeddin需要考虑几点:
@@ -13,10 +40,17 @@ self attention对位置不敏感，因此需要在embedding中添加位置信息
 3. 需要有值域的范围限制。
 
 ### 2.2 transformer layer
-#### **Encoder**
-#### **Decoder**
+**Encoder**:   
+并行计算，无attention mask
 
-### Q1. transformer中的attention为什么scaled?
+**Decoder**:    
+有attention mask，每次预测下一个单词时：
+1. 先想encoder一样用forward并行计算，输出一个单词
+2. 将当前输出的单词拼接到文本中，再次进行第1步
+3. 不断重复1-2直到输出终止符/最大长度
+
+-----
+## 3. Q1: transformer中的attention为什么scaled?
 其实该链接讲的很清晰:
 [transformer中的attention为什么scaled?-知乎](https://www.zhihu.com/question/339723385/answer/782509914)
 
@@ -38,8 +72,19 @@ $$
 因此放缩$\sqrt{d_k}$可以将$q\cdot k$放缩到方差为1
 
 
-### Q2：<ins>**为什么在其他 softmax 的应用场景，不需要做 scaled？**</ins>
-简言之，这个问题涉及到加性attention和乘性attention区别。参考链接3
+-----
+## 4. <ins>**Q2: 为什么在其他 softmax 的应用场景，不需要做 scaled？**</ins>
+简言之，这个问题涉及到加性attention和乘性attention区别。参考链接3.
+
+对于**乘性attention**，应该作scaled，原因已经在Q1中介绍了。
+
+对于**加性attention**：
+
+$$
+Score = W_0 \cdot tanh(W_1 Q + W_2 K)
+$$
+
+由于$tanh$会将数据放缩到0-1之间，而经过Xavier/Kaiming初始化的$W_0$也会被scaled，那么这就保障了点积之后得到的Score的分布不会特别大或特别小，避免了softmax输入值太大导致的问题。因此，<ins>**加性attention不需要scaled**</ins>
 
 相关链接：
 1. [一文看懂 Bahdanau 和 Luong 两种 Attention 机制的区别](https://zhuanlan.zhihu.com/p/129316415)

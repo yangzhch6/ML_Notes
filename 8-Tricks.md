@@ -472,3 +472,21 @@ $$
 5. [https://arxiv.org/pdf/1502.01852.pdf](https://arxiv.org/pdf/1502.01852.pdf)
 
 -----
+## 5. 多卡训练
+一般而言，多卡训练分成两种：
+1. 模型太大放不进一个GPU里，做成**模型并行**，梯度信息在多卡间传递（消耗时间很大），一般不常见。
+2. **数据并行**：每张卡里都有一个模型，并具有不同的数据，每一次iteration后都要进行梯度计算和gpu间通信，以确保每张卡内的模型都经过同样的梯度更新。(常见形式)
+
+接下来介绍下Pytorch里，数据并行的两种实现形式
+
+### 5.1 Data Parallel (单进程，Tree Reduce)
+
+### 5.2 Distributed Data Parallel (多进程，Ring Reduce)
+
+相关链接：
+1. [PyTorch 源码解读之 DP & DDP：模型并行和分布式训练解析
+](https://zhuanlan.zhihu.com/p/343951042)
+2. [DDP系列第一篇：入门教程](https://zhuanlan.zhihu.com/p/178402798)
+3. [Pytorch 分布式训练](https://zhuanlan.zhihu.com/p/76638962)
+4. [pytorch DDP每个进程都读一整份数据，数据量太大的情况下用什么方法解决内存爆掉的问题？](https://www.zhihu.com/question/423201889/answer/1498519328)
+5. [【分布式训练】单机多卡的正确打开方式（一）：理论基础](https://zhuanlan.zhihu.com/p/72939003) (最为推荐)
