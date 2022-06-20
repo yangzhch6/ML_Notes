@@ -1,3 +1,6 @@
+## Logic Regression
+Q1. 为什么逻辑回归用的Sigmoid?
+
 ## EM算法
 参考：
 1. [人人都懂EM算法](https://zhuanlan.zhihu.com/p/36331115)
