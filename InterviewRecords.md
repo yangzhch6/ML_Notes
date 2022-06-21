@@ -100,7 +100,7 @@ PS：这大概是目前为止最尬的面试，推荐确实没学
 
 5. 问了个推荐的问题：给定u_id, video_id, video_title, label(是否点击)。 每一行数据都是推给用户的。问怎么设计这个推荐系统：       
     不懂推荐系统就强答了。我说做一个u_id对应一个embedding layer当作u_id的embedding。video的embedding有两个，因为title只是标题内容，但标题相似的视频可能代表不同内容，因此    
-    $v {\underline{~}} embedd = embedding {\underline{~}} layer(v_id) + Bert(v {\underline{~}} title)$      
+    $v_{-}embedd = embedding_{-}layer(v_id) + Bert(v_{-}title)$      
     然后两embedding做attention或者其他操作，甚至更进一步的可以用contrastive loss去训练他们的embedding。
     （纯脑洞呀...）
 
