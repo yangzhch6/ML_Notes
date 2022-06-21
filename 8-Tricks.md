@@ -1,19 +1,5 @@
 # Tricks
-## 1. Gradient Vanish & Explode
-二者都是由于网络层数加深，雅可比矩阵(都大于1或小于1)连乘导致的问题
-
-### 1.1 Gradient Explode (梯度爆炸) 解决方案
-1. 剪裁（**需要注意的是该方法很难解决梯度消失，主要是面向梯度爆炸提出的**）
-2. Normalization
-3. pre-training+fine-tunning
-4. weithts regularization（权重正则化）防止权重过大，从而导致连乘时梯度爆炸
-
-### 1.2 Gradient Vanish
-1. LSTM
-2. ReLU (<ins>存在疑惑：对RNN难以起到作用？</ins>)
-3. Normalization
-4. 残差 (<ins>存在疑惑：从推导来看解决的是梯度消失，无法解决梯度爆炸</ins>)
-5. pre-training+fine-tunning
+## 1. 
 
 -----
 ## 2. Normalization
