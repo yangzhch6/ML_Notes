@@ -11,10 +11,13 @@
 4. Bagging
 5. Dropout (可视为Bagging的一种形式)
 
+-----
+
 ## 2. 怎么处理过拟合？
 跟提升泛化性类似，可在其基础上增加下面的方法：
 1. 减少模型参数量（<ins>个人认为：在缓解过拟合和提升泛化性方面，控制模型参数量是个需要均衡的问题。有时提升泛化性要增加模型参数，有时缓解过拟合要减小参数。</ins>）
 
+-----
 
 ## 3. 怎么处理欠拟合？
 数据角度：
@@ -26,6 +29,7 @@
 模型角度：
 1. 模型复杂度太低
 
+-----
 
 ## 4. 样本不均衡怎么办？
 数据角度：
@@ -38,17 +42,17 @@
 3. 采样+集成学习    
     这部分还没看明白: [一文解决样本不均衡](https://jishuin.proginn.com/p/763bfbd6f706) 
 
+-----
 
 ## 5. Gradient Vanish & Explode
 二者都是由于网络层数加深，雅可比矩阵(都大于1或小于1)连乘导致的问题
-
-### 1.1 Gradient Explode (梯度爆炸) 解决方案
+### 5.1 Gradient Explode (梯度爆炸) 解决方案
 1. 剪裁（**需要注意的是该方法很难解决梯度消失，主要是面向梯度爆炸提出的**）
 2. Normalization
 3. pre-training+fine-tunning
 4. weithts regularization（权重正则化）防止权重过大，从而导致连乘时梯度爆炸
 
-### 1.2 Gradient Vanish
+### 5.2 Gradient Vanish
 1. LSTM
 2. ReLU (<ins>存在疑惑：对RNN难以起到作用？</ins>)
 3. Normalization
